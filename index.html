@@ -1538,6 +1538,22 @@ function bindTabs(){
     for (var i = 0; i < c.length; i++) c[i].classList.toggle('is-on', c[i] === b);
     renderAll();
   });
+  // 代谢资料（性别/年龄/身高/活动水平）：改动即保存
+  ['inSex','inAge','inHeight','inAct'].forEach(function(id){
+    $(id).addEventListener('change', function(){
+      var age = Math.round(+$('inAge').value);
+      var h = +$('inHeight').value;
+      var act = +$('inAct').value;
+      DB.upsert('profile', {
+        id:'me', type:'profile',
+        sex: $('inSex').value === 'male' ? 'male' : 'female',
+        age: (age >= 10 && age <= 99) ? age : (profile().age || 28),
+        height: (h >= 100 && h <= 230) ? h : (profile().height || 163),
+        activity: [1.2,1.375,1.55,1.725,1.9].indexOf(act) >= 0 ? act : (profile().activity || 1.375)
+      });
+      renderAll();
+    });
+  });
 }
 
 function bindBody(){
